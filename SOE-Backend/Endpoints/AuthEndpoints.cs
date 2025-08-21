@@ -1,10 +1,13 @@
 ﻿using Application.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Routing;
 using SOE_Backend.Contracts.Authentication;
 using SOE_Backend.Contracts.Authethication;
 using SOE_Backend.Contracts.Users;
+using SOE_Backend.CustomAttributes;
 using System.Net.Http;
 
 namespace SOE_Backend.Endpoints
@@ -19,9 +22,9 @@ namespace SOE_Backend.Endpoints
 
             endpoints.MapPost("login", Login);
 
-            endpoints.MapPost("refresh", RefreshToken);
+            endpoints.MapPost("refresh", RefreshToken).AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
 
-            endpoints.MapPost("logout", Logout);
+            endpoints.MapPost("logout", Logout).AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
 
             return app;
         }
@@ -48,17 +51,16 @@ namespace SOE_Backend.Endpoints
             return Results.Ok(token);
         }
         private static async Task<IResult> RefreshToken(
+            RefreshTokenRequest request,
             AuthService authService,
             HttpContext httpContext)
         {
             try
             {
-                var refreshToken = httpContext.Request.Cookies["meow-cookie"];
+                var refreshToken = httpContext.Items["ValidatedRefreshToken"] as string;
 
-                if (string.IsNullOrEmpty(refreshToken))
-                {
-                    return Results.BadRequest("Refresh token not found");
-                }
+                if (refreshToken is null)
+                    throw new Exception("Refresh token not found!");
 
                 var tokens = await authService.RefreshAccessToken(refreshToken);
 
@@ -76,13 +78,16 @@ namespace SOE_Backend.Endpoints
                 return Results.Unauthorized();
             }
         }
-
         private static async Task<IResult> Logout(
+            LogoutRequest logoutRequest,
             AuthService authService,
             HttpContext httpContext
             )
         {
-            var refreshToken = httpContext.Request.Cookies["meow-cookie"];
+            var refreshToken = httpContext.Items["ValidatedRefreshToken"] as string;
+
+            if (refreshToken is null)
+                throw new Exception("Refresh token not found!");
 
             if (!string.IsNullOrEmpty(refreshToken))
             {

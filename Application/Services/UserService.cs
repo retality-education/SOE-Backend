@@ -23,14 +23,12 @@ namespace Application.Services
         private readonly ICacheService _cacheService;
         private readonly IRestoreCodeProvider _restoreCodeProvider;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly IJwtProvider _jwtProvider;
         public UserService(IUsersRepository usersRepository, 
             ICloudinaryService cloudinaryService, 
             IEmailSender emailSender, 
             ICacheService cacheService,
             IRestoreCodeProvider restoreCodeProvider,
-            IPasswordHasher passwordHasher,
-            IJwtProvider jwtProvider)
+            IPasswordHasher passwordHasher)
 
         {
             _usersRepository = usersRepository;
@@ -39,7 +37,6 @@ namespace Application.Services
             _cacheService = cacheService;
             _restoreCodeProvider = restoreCodeProvider;
             _passwordHasher = passwordHasher;
-            _jwtProvider = jwtProvider;
         }
         public async Task<User> Me(string userId)
         {
@@ -147,14 +144,6 @@ namespace Application.Services
             await _usersRepository.UpdateAsync(user);
 
             await _cacheService.RemoveAsync(cacheKey);
-        }
-        public Guid GetUserIdFromCookie(string cookie)
-        {
-            var userId = _jwtProvider.GetUserIdFromAccessTokem(cookie);
-            if (userId is null)
-                throw new Exception("Cookie is invalid!");
-
-            return (Guid)userId;
         }
 
         //public async Task GetFavoriets()

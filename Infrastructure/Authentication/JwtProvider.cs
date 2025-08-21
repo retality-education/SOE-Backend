@@ -70,7 +70,7 @@ namespace Infrastructure.Authentication
             var claims = new List<Claim>
             {
                 new Claim("username", user.UserName),
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.NameIdentifier   , user.Id.ToString()),
                 new Claim("userId", user.Id.ToString()),
                 new(JwtRegisteredClaimNames.Email, user.Email)
             };

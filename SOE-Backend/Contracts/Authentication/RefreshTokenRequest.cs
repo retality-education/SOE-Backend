@@ -3,6 +3,6 @@
 namespace SOE_Backend.Contracts.Authethication
 {
     public record RefreshTokenRequest(
-            [Required] string RefreshToken
+            string RefreshToken
             );
 }

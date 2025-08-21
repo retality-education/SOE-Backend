@@ -21,6 +21,7 @@ using Persistence.Mapping;
 using Persistence.Repositories;
 using Serilog;
 using Serilog.Events;
+using SOE_Backend.CustomAttributes;
 using SOE_Backend.Extensions;
 using SOE_Backend.Middlewares;
 
@@ -76,6 +77,8 @@ try
     services.AddSwaggerGen();
 
     services.AddDbContext<SoeBackendContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+    services.AddScoped<ValidateRefreshTokenFilter>();
 
     services.AddScoped<IUsersRepository, UsersRepository>();
     services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

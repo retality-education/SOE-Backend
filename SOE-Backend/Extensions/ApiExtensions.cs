@@ -42,30 +42,21 @@ namespace SOE_Backend.Extensions
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["cool-coocka"];
+                            // ПРИОРИТЕТ 1: Пробуем получить Access Token из заголовка
+                            if (context.Request.Headers.TryGetValue("Authorization", out var headerValue))
+                            {
+                                var token = headerValue.ToString().Replace("Bearer ", "");
+                                if (!string.IsNullOrEmpty(token))
+                                {
+                                    context.Token = token;
+                                    return Task.CompletedTask;
+                                }
+                            }
 
-                            return Task.CompletedTask;
-                        }
-                    };
-                }).AddJwtBearer("Refresh", options => 
-                {
-                    var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+                            // ПРИОРИТЕТ 2: Если в заголовке не было, пробуем из куки
+                            // (для совместимости с веб-страницами, ТОЛЬКО ACCESS TOKEN)
+                            context.Token = context.Request.Cookies["cool-cooka"];
 
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.RefreshSecretKey)),
-                        
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            context.Token = context.Request.Cookies["meow-cookie"];
                             return Task.CompletedTask;
                         }
                     };
