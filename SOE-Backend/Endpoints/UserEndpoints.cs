@@ -30,12 +30,10 @@ namespace SOE_Backend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var cookie = httpContext.Request.Cookies["cool-coocka"];
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(cookie))
-                throw new Exception("Cookie is invalid");
-
-            var userId = userService.GetUserIdFromCookie(cookie);
+            if (userId is null)
+                throw new Exception("Token in invalid!");
 
             var user = await userService.Me(userId);
             return Results.Ok(new
@@ -68,12 +66,10 @@ namespace SOE_Backend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var cookie = httpContext.Request.Cookies["cool-coocka"];
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(cookie))
-                throw new Exception("Cookie is invalid");
-
-            var userId = userService.GetUserIdFromCookie(cookie);
+            if (userId is null)
+                throw new Exception("Token in invalid!");
 
             await userService.ChangePassword(userId, request.CurrentPassword, request.NewPassword);
             return Results.Ok(new { Message = "Password successfully changed" });
@@ -85,12 +81,10 @@ namespace SOE_Backend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var cookie = httpContext.Request.Cookies["cool-coocka"];
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(cookie))
-                throw new Exception("Cookie is invalid");
-
-            var userId = userService.GetUserIdFromCookie(cookie);
+            if (userId is null)
+                throw new Exception("Token in invalid!");
 
             var avatarUrl = await userService.ChangeAvatar(userId, request.Avatar);
             return Results.Ok(new { AvatarUrl = avatarUrl });

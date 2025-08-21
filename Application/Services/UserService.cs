@@ -41,16 +41,19 @@ namespace Application.Services
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
         }
-        public async Task<User> Me(Guid userId)
+        public async Task<User> Me(string userId)
         {
-            var user = await _usersRepository.GetByIdAsync(userId);
+            if (!Guid.TryParse(userId, out Guid userIdGuid))
+                throw new Exception("Token claim is invalid!");
+
+            var user = await _usersRepository.GetByIdAsync(userIdGuid);
 
             if (user.AvatarId is not null)
                 user.AvatarId = _cloudinaryService.GetImageUrl(user.AvatarId, 600, 600);
 
             return user;
         }
-        public async Task<string> ChangeAvatar(Guid userId, IFormFile avatarFile)
+        public async Task<string> ChangeAvatar(string userId, IFormFile avatarFile)
         {
             if (avatarFile == null || avatarFile.Length == 0)
                 throw new ArgumentException("Avatar file is required");
@@ -64,21 +67,24 @@ namespace Application.Services
             if (!allowedExtensions.Contains(fileExtension))
                 throw new ArgumentException("Only JPG, PNG and GIF images are allowed");
 
-            var uploadResult = await _cloudinaryService.UploadAvatarAsync(avatarFile, userId);
+            if (!Guid.TryParse(userId, out Guid userGuidId))
+                throw new Exception("Token is invalid!");
+
+            var uploadResult = await _cloudinaryService.UploadAvatarAsync(avatarFile, userGuidId);
 
             if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Failed to upload avatar");
 
-            var user = await _usersRepository.GetByIdAsync(userId);
+            var user = await _usersRepository.GetByIdAsync(userGuidId);
             if (user == null)
                 throw new InvalidOperationException("User not found");
 
             user.AvatarId = uploadResult.PublicId.ToString();
             await _usersRepository.UpdateAsync(user);
 
-            return _cloudinaryService.GetImageUrl(uploadResult.PublicId, 200, 200);
+            return _cloudinaryService.GetImageUrl(uploadResult.PublicId, 800, 800);
         }
-        public async Task ChangePassword(Guid userId, string currentPassword, string newPassword)
+        public async Task ChangePassword(string userId, string currentPassword, string newPassword)
         {
             if (string.IsNullOrWhiteSpace(newPassword))
                 throw new ArgumentException("New password is required");
@@ -86,8 +92,12 @@ namespace Application.Services
             if (newPassword.Length < 6)
                 throw new ArgumentException("Password must be at least 6 characters long");
 
-            var user = await _usersRepository.GetByIdAsync(userId);
-            if (user == null)
+            if (!Guid.TryParse(userId, out var userGuidId))
+                throw new Exception("Token is invalid!");
+
+            var user = await _usersRepository.GetByIdAsync(userGuidId);
+            
+            if (user is null)
                 throw new InvalidOperationException("User not found");
 
             if (!_passwordHasher.Verify(currentPassword, user.PasswordHash))

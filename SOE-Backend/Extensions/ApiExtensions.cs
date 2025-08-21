@@ -57,7 +57,8 @@ namespace SOE_Backend.Extensions
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.RefreshSecretKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.RefreshSecretKey)),
+                        
                     };
 
                     options.Events = new JwtBearerEvents
