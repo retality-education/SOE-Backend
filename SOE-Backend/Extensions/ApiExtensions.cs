@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SOE_Backend.Endpoints;
+using SOEBackend.Endpoints;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SOE_Backend.Extensions
+namespace SOEBackend.Extensions
 {
     public static class ApiExtensions
     {
@@ -16,6 +16,7 @@ namespace SOE_Backend.Extensions
             app.MapAuthEndpoints();
             app.MapStoryEndpoints();
             app.MapUserEndpoints();
+            app.MapCatalogEndpoints();
         }
 
         public static void AddApiAuthentication(

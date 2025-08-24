@@ -9,6 +9,8 @@ public partial class BookEntity
 
     public string BookName { get; set; } = null!;
 
+    public string Description { get; set; } = string.Empty;
+
     public string? Annotation { get; set; }
 
     public Guid AuthorId { get; set; }
@@ -22,6 +24,7 @@ public partial class BookEntity
     public DateTime? CreatedAt { get; set; }
 
     public virtual UserEntity Author { get; set; } = null!;
+    public bool IsAdultContent { get; set; } = false;
 
     public virtual ICollection<BookPartEntity> BookParts { get; set; } = new List<BookPartEntity>();
 
