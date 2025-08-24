@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Mapping;
 using Persistence.Repositories;
@@ -74,7 +75,41 @@ try
 
     services.AddEndpointsApiExplorer();
 
-    services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "SOE Backend API",
+            Version = "v1",
+            Description = "API для каталога книг"
+        });
+
+        // JWT поддержка
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Введите JWT токен в формате: Bearer {token}"
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+    });
 
     services.AddDbContext<SoeBackendContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
