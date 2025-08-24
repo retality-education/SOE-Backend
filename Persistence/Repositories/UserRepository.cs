@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
-    public class UsersRepository : IUsersRepository
+    public class UserRepository : IUserRepository
     {
         private readonly SoeBackendContext _context;
         private readonly IMapper _mapper;
-        public UsersRepository(SoeBackendContext context, IMapper mapper)
+        public UserRepository(SoeBackendContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -24,8 +24,8 @@ namespace Persistence.Repositories
         public async Task AddAsync(User user)
         {
             var userEntity = _mapper.Map<UserEntity>(user);
-            await _context.Users.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
+            await _context.Users.AddAsync(userEntity).ConfigureAwait(false);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<User?> GetByEmailAsync(string email)
@@ -37,7 +37,7 @@ namespace Persistence.Repositories
 
             var userEntity = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email).ConfigureAwait(false);
 
             if (userEntity is null)
             {
@@ -50,14 +50,14 @@ namespace Persistence.Repositories
         {
             return await _context.Users
                 .AsNoTracking()
-                .AnyAsync(u => u.Email == email);
+                .AnyAsync(u => u.Email == email).ConfigureAwait(false);
         }
 
-        public async Task<User> GetByIdAsync(Guid userId)
+        public async Task<User?> GetByIdAsync(Guid userId)
         {
             var userEntity = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+                .FirstOrDefaultAsync(u => u.UserId == userId).ConfigureAwait(false);
 
             if (userEntity is null)
             {
@@ -69,27 +69,28 @@ namespace Persistence.Repositories
 
         public async Task ChangePasswordAsync(User user, string newPassword)
         {
-            var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.UserId == user.Id);
+            var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.UserId == user.Id).ConfigureAwait(false);
 
             if (userEntity is null)
                 throw new ArgumentException("User not exist");
 
             userEntity.PasswordHash = newPassword;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(User user)
         {
+            ArgumentNullException.ThrowIfNull(user);
 
-            var entity = await _context.Users.FindAsync(user.Id);
+            var entity = await _context.Users.FindAsync(user.Id).ConfigureAwait(false);
             if (entity is null)
                 throw new ArgumentException("User with this id not exist");
 
             _mapper.Map(user, entity);
 
             _context.Users.Update(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }
