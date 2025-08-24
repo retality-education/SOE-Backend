@@ -48,7 +48,11 @@ namespace SOEBackend.Endpoints
 
             httpContext.Response.Cookies.Append("meow-cookie", rtoken);
 
-            return Results.Ok(token);
+            return Results.Ok(new
+            {
+                token,
+                rtoken
+            });
         }
         private static async Task<IResult> RefreshToken(
             RefreshTokenRequest request,
