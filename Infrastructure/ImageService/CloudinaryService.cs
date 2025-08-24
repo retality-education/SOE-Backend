@@ -18,6 +18,8 @@ namespace Infrastructure.ImageService
 
         public CloudinaryService(IOptions<CloudinaryOptions> settings)
         {
+            ArgumentNullException.ThrowIfNull(settings);
+
             _settings = settings.Value;
 
             var account = new Account(
@@ -31,28 +33,39 @@ namespace Infrastructure.ImageService
 
         public async Task<ImageUploadResult> UploadAvatarAsync(IFormFile file, Guid userId)
         {
-            return await UploadImageAsync(file, $"avatars/{userId}");
+            ArgumentNullException.ThrowIfNull(file);
+            return await UploadImageAsync(file, $"avatars/{userId}").ConfigureAwait(false);
         }
 
-        public async Task<ImageUploadResult> UploadBookImageAsync(IFormFile file, Guid userId, Guid bookId)
+        public async Task<ImageUploadResult> UploadBookImageAsync(IFormFile file, Guid bookId, Guid userId)
         {
-            return await UploadImageAsync(file, $"books/{userId}/{bookId}");
+            ArgumentNullException.ThrowIfNull(file);
+            return await UploadImageAsync(file, $"books/{userId}/{bookId}").ConfigureAwait(false);
         }
 
         public async Task<ImageUploadResult> UploadSiteImageAsync(IFormFile file, string folder)
         {
-            return await UploadImageAsync(file, $"site/{folder}");
+            ArgumentNullException.ThrowIfNull(file);
+            return await UploadImageAsync(file, $"site/{folder}").ConfigureAwait(false);
         }
 
         public async Task<DeletionResult> DeleteImageAsync(string publicId)
         {
             var deleteParams = new DeletionParams(publicId);
-            return await _cloudinary.DestroyAsync(deleteParams);
+            return await _cloudinary.DestroyAsync(deleteParams).ConfigureAwait(false);
         }
 
-        public string GetImageUrl(string publicId, int? width = null, int? height = null)
+        public string GetImageUrl(string publicId, int? width = null, int? height = null, bool isBlurred = false, int blurStrength = 1000)
         {
             var transformation = new Transformation();
+            
+            if (isBlurred)
+            {
+                transformation = transformation
+                    .Effect($"blur:{blurStrength}")
+                    .Quality("auto");
+
+            }
 
             if (width.HasValue || height.HasValue)
             {

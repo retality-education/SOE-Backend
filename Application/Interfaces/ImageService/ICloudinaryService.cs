@@ -14,6 +14,6 @@ namespace Application.Interfaces.CloudinaryService
         Task<ImageUploadResult> UploadBookImageAsync(IFormFile file, Guid bookId, Guid userId);
         Task<ImageUploadResult> UploadSiteImageAsync(IFormFile file, string folder);
         Task<DeletionResult> DeleteImageAsync(string publicId);
-        string GetImageUrl(string publicId, int? width = null, int? height = null);
+        string GetImageUrl(string publicId, int? width = null, int? height = null, bool isBlurred = false, int blurStrength = 1000);
     }
 }
