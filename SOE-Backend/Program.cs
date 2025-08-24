@@ -21,9 +21,9 @@ using Persistence.Mapping;
 using Persistence.Repositories;
 using Serilog;
 using Serilog.Events;
-using SOE_Backend.CustomAttributes;
-using SOE_Backend.Extensions;
-using SOE_Backend.Middlewares;
+using SOEBackend.CustomAttributes;
+using SOEBackend.Extensions;
+using SOEBackend.Middlewares;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -80,11 +80,14 @@ try
 
     services.AddScoped<ValidateRefreshTokenFilter>();
 
-    services.AddScoped<IUsersRepository, UsersRepository>();
+    services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+    services.AddScoped<ICatalogDataRepository, CatalogDataRepository>();
+    services.AddScoped<IBookRepository, BookRepository>();
 
     services.AddScoped<AuthService>();
     services.AddScoped<UserService>();
+    services.AddScoped<CatalogService>();
 
     services.AddScoped<IJwtProvider, JwtProvider>();
     services.AddScoped<IEmailSender, SendGridEmailSender>();
