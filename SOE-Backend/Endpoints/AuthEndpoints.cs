@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Routing;
-using SOE_Backend.Contracts.Authentication;
-using SOE_Backend.Contracts.Authethication;
-using SOE_Backend.Contracts.Users;
-using SOE_Backend.CustomAttributes;
+using SOEBackend.Contracts.Authentication;
+using SOEBackend.Contracts.Authethication;
+using SOEBackend.Contracts.Users;
+using SOEBackend.CustomAttributes;
 using System.Net.Http;
 
-namespace SOE_Backend.Endpoints
+namespace SOEBackend.Endpoints
 {
     public static class AuthEndpoints
     {

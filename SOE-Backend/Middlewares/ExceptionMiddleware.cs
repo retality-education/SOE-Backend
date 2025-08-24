@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace SOE_Backend.Middlewares
+namespace SOEBackend.Middlewares
 {
     public class ExceptionMiddleware
     {

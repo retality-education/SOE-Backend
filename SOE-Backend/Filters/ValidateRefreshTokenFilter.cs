@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json;
 
-namespace SOE_Backend.CustomAttributes
+namespace SOEBackend.CustomAttributes
 {
     public class ValidateRefreshTokenFilter : IEndpointFilter
     {

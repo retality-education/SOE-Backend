@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SOE_Backend.Contracts.Authentication
+namespace SOEBackend.Contracts.Authentication
 {
     public record LogoutRequest(
             string RefreshToken

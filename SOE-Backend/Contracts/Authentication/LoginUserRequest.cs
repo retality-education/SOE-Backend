@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SOE_Backend.Contracts.Users
+namespace SOEBackend.Contracts.Users
 {
     public record LoginUserRequest(
         [Required] string Email,

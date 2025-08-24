@@ -14,17 +14,17 @@ namespace Application.Services
     public class AuthService
     {
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
 
         public AuthService(IRefreshTokenRepository refreshTokenRepository,
-            IUsersRepository usersRepository, 
+            IUserRepository userRepository, 
             IPasswordHasher passwordHasher, 
             IJwtProvider jwtProvider)
         {
             _refreshTokenRepository = refreshTokenRepository;
-            _usersRepository = usersRepository;
+            _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
         }
@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task Register(string userName, string email, string password)
         {
-            if (await _usersRepository.ExistsByEmailAsync(email))
+            if (await _userRepository.ExistsByEmailAsync(email))
             {
                 throw new ArgumentException("User with this email already exists", nameof(email));
             }
@@ -41,11 +41,11 @@ namespace Application.Services
 
             var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
 
-            await _usersRepository.AddAsync(user);
+            await _userRepository.AddAsync(user);
         }
         public async Task<(string AccessToken, string RefreshToken)> Login(string email, string password)
         {
-            var user = await _usersRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email);
             var result = _passwordHasher.Verify(password, user.PasswordHash);
 
             if (result == false)
@@ -68,7 +68,7 @@ namespace Application.Services
             if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiresAt < DateTime.UtcNow)
                 throw new Exception("Invalid or expired refresh token");
 
-            var user = await _usersRepository.GetByIdAsync(storedToken.UserId);
+            var user = await _userRepository.GetByIdAsync(storedToken.UserId);
 
             // Генерируем новые токены
             var newAccessToken = _jwtProvider.GenerateToken(user);

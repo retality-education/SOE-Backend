@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SOE_Backend.Endpoints
+namespace SOEBackend.Endpoints
 {
     public static class StoryEndpoints
     {

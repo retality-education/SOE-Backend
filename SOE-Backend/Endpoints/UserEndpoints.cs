@@ -3,13 +3,13 @@ using Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using SOE_Backend.Contracts.Users;
+using SOEBackend.Contracts.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ForgotPasswordRequest = SOE_Backend.Contracts.Users.ForgotPasswordRequest;
-using ResetPasswordRequest = SOE_Backend.Contracts.Users.ResetPasswordRequest;
+using ForgotPasswordRequest = SOEBackend.Contracts.Users.ForgotPasswordRequest;
+using ResetPasswordRequest = SOEBackend.Contracts.Users.ResetPasswordRequest;
 
-namespace SOE_Backend.Endpoints
+namespace SOEBackend.Endpoints
 {
     public static class UserEndpoints
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SOE_Backend.Contracts.Authethication
+namespace SOEBackend.Contracts.Authethication
 {
     public record RefreshTokenRequest(
             string RefreshToken

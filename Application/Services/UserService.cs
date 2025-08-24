@@ -17,13 +17,13 @@ namespace Application.Services
 {
     public class UserService
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUserRepository _usersRepository;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IEmailSender _emailSender;
         private readonly ICacheService _cacheService;
         private readonly IRestoreCodeProvider _restoreCodeProvider;
         private readonly IPasswordHasher _passwordHasher;
-        public UserService(IUsersRepository usersRepository, 
+        public UserService(IUserRepository usersRepository, 
             ICloudinaryService cloudinaryService, 
             IEmailSender emailSender, 
             ICacheService cacheService,
