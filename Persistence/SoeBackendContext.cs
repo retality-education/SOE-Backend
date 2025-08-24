@@ -61,8 +61,6 @@ public partial class SoeBackendContext : DbContext
 
     public virtual DbSet<UserUnlockedEndingEntity> UserUnlockedEndings { get; set; }
 
-    public virtual DbSet<SortOptionEntity> SortOptions { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Database=SOE-Backend;Username=postgres;Password=12345");
@@ -94,12 +92,6 @@ public partial class SoeBackendContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.LanguageId).HasColumnName("language_id");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
-            entity.Property(e => e.Description)
-            .HasColumnName("description")
-            .HasDefaultValue("");
-            entity.Property(e => e.IsAdultContent)
-                .HasColumnName("is_adult_content")
-                .HasDefaultValue(false);
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books)
                 .HasForeignKey(d => d.AuthorId)
@@ -165,43 +157,6 @@ public partial class SoeBackendContext : DbContext
                         j.IndexerProperty<Guid>("BookId").HasColumnName("book_id");
                         j.IndexerProperty<Guid>("UserId").HasColumnName("user_id");
                     });
-        });
-
-        modelBuilder.Entity<SortOptionEntity>(entity =>
-        {
-            entity.HasKey(e => e.SortOptionId)
-                .HasName("sort_options_pkey");
-
-            entity.ToTable("sort_options");
-
-            entity.Property(e => e.SortOptionId)
-                .HasColumnName("sort_option_id")
-                .UseIdentityColumn();
-
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(50)
-                .HasColumnName("name");
-
-            entity.Property(e => e.DisplayName)
-                .IsRequired()
-                .HasMaxLength(100)
-                .HasColumnName("display_name");
-
-            entity.Property(e => e.Description)
-                .HasMaxLength(200)
-                .HasColumnName("description");
-
-            entity.Property(e => e.Order)
-                .HasColumnName("order")
-                .HasDefaultValue(0);
-
-            entity.Property(e => e.IsActive)
-                .HasColumnName("is_active")
-                .HasDefaultValue(true);
-
-            entity.HasIndex(e => e.Name, "sort_options_name_key")
-                .IsUnique();
         });
 
         modelBuilder.Entity<BookPartEntity>(entity =>
