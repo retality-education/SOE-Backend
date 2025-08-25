@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Users
 {
-    public record LoginUserRequest(
+    internal record LoginUserRequest(
         [Required] string Email,
         [Required] string Password
         );

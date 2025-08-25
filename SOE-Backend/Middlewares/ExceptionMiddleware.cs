@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SOEBackend.Middlewares
 {
-    public class ExceptionMiddleware
+    internal class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;

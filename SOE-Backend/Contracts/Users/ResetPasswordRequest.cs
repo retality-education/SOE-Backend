@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Users
 {
-    public record ResetPasswordRequest
+    internal record ResetPasswordRequest
     (
         [Required] string Email,
         [Required] string ResetCode,

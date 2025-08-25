@@ -2,5 +2,5 @@
 
 namespace SOEBackend.Contracts.Users
 {
-    public record ChangeAvatarRequest([Required]IFormFile Avatar);
+    internal record ChangeAvatarRequest([Required]IFormFile Avatar);
 }

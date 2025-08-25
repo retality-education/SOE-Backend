@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Authentication
 {
-    public record LogoutRequest(
+    internal record LogoutRequest(
             string RefreshToken
             );
 }

@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Users
 {
-    public record ChangePasswordRequest(
+    internal record ChangePasswordRequest(
         [Required] string CurrentPassword,
         [Required]string NewPassword
     );

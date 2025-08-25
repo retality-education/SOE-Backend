@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SOEBackend.Extensions
 {
-    public static class ApiExtensions
+    internal static class ApiExtensions
     {
         public static void AddMappedEndpoints(this IEndpointRouteBuilder app)
         {

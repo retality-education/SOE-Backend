@@ -12,7 +12,7 @@ using System.Net.Http;
 
 namespace SOEBackend.Endpoints
 {
-    public static class AuthEndpoints
+    internal static class AuthEndpoints
     {
         public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
         {

@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Users
 {
-    public record ForgotPasswordRequest
+    internal record ForgotPasswordRequest
     (
         [Required] string Email
     );

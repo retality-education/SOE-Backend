@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace SOEBackend.CustomAttributes
 {
-    public class ValidateRefreshTokenFilter : IEndpointFilter
+    internal class ValidateRefreshTokenFilter : IEndpointFilter
     {
         private readonly IJwtProvider _jwtProvider;
 

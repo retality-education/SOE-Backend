@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Contracts.Authethication
 {
-    public record RefreshTokenRequest(
+    internal record RefreshTokenRequest(
             string RefreshToken
             );
 }

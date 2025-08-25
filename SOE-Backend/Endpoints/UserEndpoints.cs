@@ -11,7 +11,7 @@ using ResetPasswordRequest = SOEBackend.Contracts.Users.ResetPasswordRequest;
 
 namespace SOEBackend.Endpoints
 {
-    public static class UserEndpoints
+    internal static class UserEndpoints
     {
         public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder app)
         {

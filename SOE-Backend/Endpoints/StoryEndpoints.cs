@@ -2,7 +2,7 @@
 
 namespace SOEBackend.Endpoints
 {
-    public static class StoryEndpoints
+    internal static class StoryEndpoints
     {
         public static IEndpointRouteBuilder MapStoryEndpoints(this IEndpointRouteBuilder app)
         {
