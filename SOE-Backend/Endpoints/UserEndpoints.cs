@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using SOEBackend.Contracts.Users;
+using SOEBackend.Filters;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ForgotPasswordRequest = SOEBackend.Contracts.Users.ForgotPasswordRequest;
@@ -17,11 +18,22 @@ namespace SOEBackend.Endpoints
         {
             var endpoints = app.MapGroup("api/user");
 
-            endpoints.MapGet("me", Me).RequireAuthorization();
+            endpoints.MapGet("me", Me)
+                .RequireAuthorization()
+                .AddEndpointFilter<ValidateUserExistsAttribute>();
+            
             endpoints.MapPost("forgot-password", ForgotPassword);
+            
             endpoints.MapPost("reset-password", ResetPassword);
-            endpoints.MapPost("change-password", ChangePassword).RequireAuthorization();
-            endpoints.MapPost("change-avatar", ChangeAvatar).DisableAntiforgery().RequireAuthorization();
+
+            endpoints.MapPost("change-password", ChangePassword)
+                .RequireAuthorization()
+                .AddEndpointFilter<ValidateUserExistsAttribute>();
+            
+            endpoints.MapPost("change-avatar", ChangeAvatar)
+                .DisableAntiforgery()
+                .RequireAuthorization()
+                .AddEndpointFilter<ValidateUserExistsAttribute>();
 
             return app;
         }
@@ -30,10 +42,7 @@ namespace SOEBackend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId is null)
-                throw new Exception("Token in invalid!");
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
             var user = await userService.Me(userId).ConfigureAwait(false);
             return Results.Ok(new
@@ -66,11 +75,7 @@ namespace SOEBackend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId is null)
-                throw new Exception("Token in invalid!");
-
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             await userService.ChangePassword(userId, request.CurrentPassword, request.NewPassword).ConfigureAwait(false);
             return Results.Ok(new { Message = "Password successfully changed" });
         }
@@ -81,11 +86,7 @@ namespace SOEBackend.Endpoints
             HttpContext httpContext,
             UserService userService)
         {
-            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId is null)
-                throw new Exception("Token in invalid!");
-
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             var avatarUrl = await userService.ChangeAvatar(userId, request.Avatar).ConfigureAwait(false);
             return Results.Ok(new { AvatarUrl = avatarUrl });
         }

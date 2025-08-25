@@ -24,7 +24,9 @@ using Serilog;
 using Serilog.Events;
 using SOEBackend.CustomAttributes;
 using SOEBackend.Extensions;
+using SOEBackend.Filters;
 using SOEBackend.Middlewares;
+using System.ComponentModel.DataAnnotations;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -114,6 +116,7 @@ try
     services.AddDbContext<SoeBackendContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
     services.AddScoped<ValidateRefreshTokenFilter>();
+    services.AddScoped<ValidateUserExistsAttribute>();
 
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -123,6 +126,7 @@ try
     services.AddScoped<AuthService>();
     services.AddScoped<UserService>();
     services.AddScoped<CatalogService>();
+    services.AddScoped<ValidationService>();
 
     services.AddScoped<IJwtProvider, JwtProvider>();
     services.AddScoped<IEmailSender, SendGridEmailSender>();

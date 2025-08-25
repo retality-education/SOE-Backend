@@ -22,9 +22,11 @@ namespace SOEBackend.Endpoints
 
             endpoints.MapPost("login", Login);
 
-            endpoints.MapPost("refresh", RefreshToken).AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
+            endpoints.MapPost("refresh", RefreshToken)
+                .AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
 
-            endpoints.MapPost("logout", Logout).AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
+            endpoints.MapPost("logout", Logout)
+                .AddEndpointFilter<ValidateRefreshTokenFilter>(); ;
 
             return app;
         }

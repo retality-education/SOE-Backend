@@ -52,6 +52,12 @@ namespace Persistence.Repositories
                 .AsNoTracking()
                 .AnyAsync(u => u.Email == email).ConfigureAwait(false);
         }
+        public async Task<bool> ExistsByIdAsync(Guid userId)
+        {
+            return await _context.Users
+                .AsNoTracking()
+                .AnyAsync(u => u.UserId == userId).ConfigureAwait(false);
+        }
 
         public async Task<User?> GetByIdAsync(Guid userId)
         {

@@ -20,7 +20,8 @@ namespace SOEBackend.Endpoints
         private static async Task<IResult> GetCatalog(
             [AsParameters] CatalogRequest catalogRequest,
             HttpContext httpContext, 
-            CatalogService catalogService)
+            CatalogService catalogService,
+            ValidationService validationService)
         {
             Guid? userId = null;
 
@@ -28,7 +29,13 @@ namespace SOEBackend.Endpoints
 
             if (!string.IsNullOrEmpty(userIdClaim))
                 if (Guid.TryParse(userIdClaim, out var parsedUserId))
+                {
                     userId = parsedUserId;
+                    if (!await validationService.IsUserExistById(parsedUserId).ConfigureAwait(false))
+                        return Results.NotFound("User not found");
+                }
+
+            
 
             var catalog = await catalogService.GetCatalogAsync(
                 catalogRequest.ToBookFilter(),
