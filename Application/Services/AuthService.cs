@@ -32,7 +32,7 @@ namespace Application.Services
 
         public async Task Register(string userName, string email, string password)
         {
-            if (await _userRepository.ExistsByEmailAsync(email))
+            if (await _userRepository.ExistsByEmailAsync(email).ConfigureAwait(false))
             {
                 throw new ArgumentException("User with this email already exists", nameof(email));
             }
@@ -41,11 +41,11 @@ namespace Application.Services
 
             var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
 
-            await _userRepository.AddAsync(user);
+            await _userRepository.AddAsync(user).ConfigureAwait(false);
         }
         public async Task<(string AccessToken, string RefreshToken)> Login(string email, string password)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email).ConfigureAwait(false);
             var result = _passwordHasher.Verify(password, user.PasswordHash);
 
             if (result == false)
@@ -57,25 +57,25 @@ namespace Application.Services
 
             var rtoken = _jwtProvider.GenerateRefreshToken(user);
 
-            await _refreshTokenRepository.SaveRefreshTokenAsync(rtoken);
+            await _refreshTokenRepository.SaveRefreshTokenAsync(rtoken).ConfigureAwait(false);
 
             return (token, rtoken.Token);
         }
 
         public async Task<(string AccessToken, string RefreshToken)> RefreshAccessToken(string refreshToken)
         {
-            var storedToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            var storedToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken).ConfigureAwait(false);
             if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiresAt < DateTime.UtcNow)
                 throw new Exception("Invalid or expired refresh token");
 
-            var user = await _userRepository.GetByIdAsync(storedToken.UserId);
+            var user = await _userRepository.GetByIdAsync(storedToken.UserId).ConfigureAwait(false);
 
             // Генерируем новые токены
             var newAccessToken = _jwtProvider.GenerateToken(user);
             var newRefreshToken = _jwtProvider.GenerateRefreshToken(user);
 
             // Обновляем токены в хранилище
-            await _refreshTokenRepository.ReplaceAsync(storedToken.Id, newRefreshToken);
+            await _refreshTokenRepository.ReplaceAsync(storedToken.Id, newRefreshToken).ConfigureAwait(false);
 
             return (newAccessToken, newRefreshToken.Token);
         }
@@ -85,7 +85,7 @@ namespace Application.Services
             var tokenId = _jwtProvider.GetRefreshTokenId(refreshToken);
             if (tokenId is null)
                 throw new Exception("Refresh token is invalid");
-            await _refreshTokenRepository.RevokeAsync((Guid)tokenId);
+            await _refreshTokenRepository.RevokeAsync((Guid)tokenId).ConfigureAwait(false);
         }
 
     }

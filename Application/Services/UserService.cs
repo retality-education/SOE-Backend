@@ -43,7 +43,7 @@ namespace Application.Services
             if (!Guid.TryParse(userId, out Guid userIdGuid))
                 throw new Exception("Token claim is invalid!");
 
-            var user = await _usersRepository.GetByIdAsync(userIdGuid);
+            var user = await _usersRepository.GetByIdAsync(userIdGuid).ConfigureAwait(false);
 
             if (user.AvatarId is not null)
                 user.AvatarId = _cloudinaryService.GetImageUrl(user.AvatarId, 600, 600);
@@ -67,17 +67,17 @@ namespace Application.Services
             if (!Guid.TryParse(userId, out Guid userGuidId))
                 throw new Exception("Token is invalid!");
 
-            var uploadResult = await _cloudinaryService.UploadAvatarAsync(avatarFile, userGuidId);
+            var uploadResult = await _cloudinaryService.UploadAvatarAsync(avatarFile, userGuidId).ConfigureAwait(false);
 
             if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Failed to upload avatar");
 
-            var user = await _usersRepository.GetByIdAsync(userGuidId);
+            var user = await _usersRepository.GetByIdAsync(userGuidId).ConfigureAwait(false);
             if (user == null)
                 throw new InvalidOperationException("User not found");
 
             user.AvatarId = uploadResult.PublicId.ToString();
-            await _usersRepository.UpdateAsync(user);
+            await _usersRepository.UpdateAsync(user).ConfigureAwait(false);
 
             return _cloudinaryService.GetImageUrl(uploadResult.PublicId, 800, 800);
         }
@@ -92,7 +92,7 @@ namespace Application.Services
             if (!Guid.TryParse(userId, out var userGuidId))
                 throw new Exception("Token is invalid!");
 
-            var user = await _usersRepository.GetByIdAsync(userGuidId);
+            var user = await _usersRepository.GetByIdAsync(userGuidId).ConfigureAwait(false);
             
             if (user is null)
                 throw new InvalidOperationException("User not found");
@@ -103,7 +103,7 @@ namespace Application.Services
             var newPasswordHash = _passwordHasher.Generate(newPassword);
             user.PasswordHash = newPasswordHash;
 
-            await _usersRepository.UpdateAsync(user);
+            await _usersRepository.UpdateAsync(user).ConfigureAwait(false);
         }
         public async Task ForgotPassword(string email)
         {
@@ -120,9 +120,9 @@ namespace Application.Services
                 Email = email,
                 UserId = user.Id,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(30)
-            }, TimeSpan.FromMinutes(30));
+            }, TimeSpan.FromMinutes(30)).ConfigureAwait(false);
 
-            await _emailSender.SendPasswordResetCodeAsync(email, restoreCode, user.UserName);
+            await _emailSender.SendPasswordResetCodeAsync(email, restoreCode, user.UserName).ConfigureAwait(false);
         }
         public async Task ResetPassword(string email, string resetCode, string newPassword)
         {
@@ -130,29 +130,20 @@ namespace Application.Services
                 throw new ArgumentException("Invalid new password");
 
             var cacheKey = $"password_reset_{email}";
-            var resetData = await _cacheService.GetAsync<PasswordResetData>(cacheKey);
+            var resetData = await _cacheService.GetAsync<PasswordResetData>(cacheKey).ConfigureAwait(false);
 
             if (resetData == null || resetData.Code != resetCode || resetData.ExpiresAt < DateTime.UtcNow)
                 throw new InvalidOperationException("Invalid or expired reset code");
 
-            var user = await _usersRepository.GetByIdAsync(resetData.UserId);
+            var user = await _usersRepository.GetByIdAsync(resetData.UserId).ConfigureAwait(false);
             if (user == null)
                 throw new InvalidOperationException("User not found");
 
             var newPasswordHash = _passwordHasher.Generate(newPassword);
             user.PasswordHash = newPasswordHash;
-            await _usersRepository.UpdateAsync(user);
+            await _usersRepository.UpdateAsync(user).ConfigureAwait(false);
 
-            await _cacheService.RemoveAsync(cacheKey);
+            await _cacheService.RemoveAsync(cacheKey).ConfigureAwait(false);
         }
-
-        //public async Task GetFavoriets()
-        //{
-
-        //}
-        //public async Task GetBooksByBookmark()
-        //{
-
-        //}
     }
 }

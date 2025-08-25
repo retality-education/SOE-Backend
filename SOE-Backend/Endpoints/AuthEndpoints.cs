@@ -32,7 +32,7 @@ namespace SOEBackend.Endpoints
             RegisterUserRequest request,
             AuthService authService)
         {
-            await authService.Register(request.UserName, request.Email, request.Password);
+            await authService.Register(request.UserName, request.Email, request.Password).ConfigureAwait(false);
 
             return Results.Ok();
         }
@@ -42,7 +42,7 @@ namespace SOEBackend.Endpoints
             AuthService authService,
             HttpContext httpContext)
         {
-            var (token, rtoken) = await authService.Login(request.Email, request.Password);
+            var (token, rtoken) = await authService.Login(request.Email, request.Password).ConfigureAwait(false);
 
             httpContext.Response.Cookies.Append("cool-coocka", token);
 
@@ -66,7 +66,7 @@ namespace SOEBackend.Endpoints
                 if (refreshToken is null)
                     throw new Exception("Refresh token not found!");
 
-                var tokens = await authService.RefreshAccessToken(refreshToken);
+                var tokens = await authService.RefreshAccessToken(refreshToken).ConfigureAwait(false);
 
                 httpContext.Response.Cookies.Delete("cool-coocka");
                 httpContext.Response.Cookies.Delete("meow-cookie");
@@ -95,7 +95,7 @@ namespace SOEBackend.Endpoints
 
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                await authService.Logout(refreshToken);
+                await authService.Logout(refreshToken).ConfigureAwait(false);
             }
  
             httpContext.Response.Cookies.Delete("cool-coocka");

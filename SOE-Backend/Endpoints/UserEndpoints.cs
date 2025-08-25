@@ -35,7 +35,7 @@ namespace SOEBackend.Endpoints
             if (userId is null)
                 throw new Exception("Token in invalid!");
 
-            var user = await userService.Me(userId);
+            var user = await userService.Me(userId).ConfigureAwait(false);
             return Results.Ok(new
             {
                 userId = user.Id,
@@ -49,7 +49,7 @@ namespace SOEBackend.Endpoints
             ForgotPasswordRequest request,
             UserService userService)
         {
-            await userService.ForgotPassword(request.Email);
+            await userService.ForgotPassword(request.Email).ConfigureAwait(false);
             return Results.Ok(new { Message = "If email exists, reset code has been sent" });
         }
 
@@ -57,7 +57,7 @@ namespace SOEBackend.Endpoints
             ResetPasswordRequest request,
             UserService userService)
         {
-            await userService.ResetPassword(request.Email, request.ResetCode, request.NewPassword);
+            await userService.ResetPassword(request.Email, request.ResetCode, request.NewPassword).ConfigureAwait(false);
             return Results.Ok(new { Message = "Password successfully reset" });
         }
 
@@ -71,7 +71,7 @@ namespace SOEBackend.Endpoints
             if (userId is null)
                 throw new Exception("Token in invalid!");
 
-            await userService.ChangePassword(userId, request.CurrentPassword, request.NewPassword);
+            await userService.ChangePassword(userId, request.CurrentPassword, request.NewPassword).ConfigureAwait(false);
             return Results.Ok(new { Message = "Password successfully changed" });
         }
 
@@ -86,7 +86,7 @@ namespace SOEBackend.Endpoints
             if (userId is null)
                 throw new Exception("Token in invalid!");
 
-            var avatarUrl = await userService.ChangeAvatar(userId, request.Avatar);
+            var avatarUrl = await userService.ChangeAvatar(userId, request.Avatar).ConfigureAwait(false);
             return Results.Ok(new { AvatarUrl = avatarUrl });
         }
     }
